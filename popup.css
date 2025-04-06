@@ -1,0 +1,353 @@
+:root {
+    --bg-primary: #1A1C22;
+    --bg-secondary: #252830;
+    --bg-tertiary: #303540;
+    --text-primary: #ffffff;
+    --text-secondary: #D0D0D0;
+    --accent: #F66E14;
+    --accent-hover: #FF8534;
+    --success: #4CAF50;
+    --warning: #FFC107;
+    --danger: #FF5252;
+    --danger-hover: #FF7373;
+    --secondary: #3A3F4C;
+    --secondary-hover: #4A4F5C;
+    --border-radius: 8px;
+    --transition: all 0.3s ease;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    width: 420px;
+    padding: 16px;
+    margin: 0;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+h1,
+h2 {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    margin-bottom: 8px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    margin: 16px 0 12px 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.3px;
+}
+
+.form-group {
+    margin-bottom: 14px;
+    position: relative;
+}
+
+.input-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--bg-tertiary);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(246, 110, 20, 0.25);
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.radio-item {
+    flex: 1;
+    min-width: 80px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background-color: var(--bg-tertiary);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
+}
+
+input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+}
+
+input[type="radio"]:checked+.radio-label {
+    background-color: var(--accent);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="radio"]:not(:checked)+.radio-label:hover {
+    border-color: var(--accent);
+    background-color: rgba(246, 110, 20, 0.1);
+}
+
+button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 20px 0;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--accent);
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+#leaderboard {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    margin-top: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--bg-tertiary);
+}
+
+#leaderboard p {
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+#leaderboard table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+#leaderboard th,
+#leaderboard td {
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--bg-tertiary);
+}
+
+#leaderboard th {
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 15px;
+    padding-bottom: 10px;
+}
+
+#leaderboard tr:hover td {
+    background-color: var(--bg-tertiary);
+}
+
+#leaderboard tr:last-child td {
+    border-bottom: none;
+}
+
+#leaderboard td:first-child,
+#leaderboard th:first-child {
+    text-align: center;
+    width: 50px;
+}
+
+/* Style editable model name cell */
+#leaderboard td[contenteditable="true"] {
+    cursor: text;
+    outline: none;
+    border-radius: 4px;
+}
+
+#leaderboard td[contenteditable="true"]:focus {
+    box-shadow: 0 0 0 1px var(--accent);
+}
+
+.rank-1,
+.rank-2,
+.rank-3 {
+    font-weight: 600;
+}
+
+.rank-1 {
+    color: #FFD700;
+}
+
+.rank-2 {
+    color: #C0C0C0;
+}
+
+.rank-3 {
+    color: #CD7F32;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-hover);
+}
+
+/* Action buttons container */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.action-buttons button {
+    margin: 0;
+}
+
+/* Button variants */
+.secondary-button {
+    background-color: var(--secondary);
+}
+
+.secondary-button:hover {
+    background-color: var(--secondary-hover);
+}
+
+.danger-button {
+    background-color: var(--danger);
+}
+
+.danger-button:hover {
+    background-color: var(--danger-hover);
+}
+
+/* Modal/Dialog */
+.confirmation-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+.dialog-content {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    max-width: 85%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--bg-tertiary), 0 0 0 4px rgba(246, 110, 20, 0.1);
+    border: 1px solid var(--bg-tertiary);
+    animation: dialogFadeIn 0.3s ease-out;
+}
+
+@keyframes dialogFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dialog-content h3 {
+    margin-top: 0;
+    color: var(--warning);
+    font-size: 1.2rem;
+}
+
+.dialog-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.dialog-buttons button {
+    margin: 0;
+    flex: 1;
+}
+
+/* Disclaimer text */
+.disclaimer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin: 0 0 8px 0;
+    font-style: italic;
+}
+
+/* Hidden elements */
+.hidden {
+    display: none;
+}
