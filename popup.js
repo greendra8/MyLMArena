@@ -164,7 +164,7 @@ function handleRename(event) {
         return;
     }
 
-    console.log(`Popup: Requesting rename from '${originalName}' to '${newName}'`);
+    logger.log(`Popup: Requesting rename from '${originalName}' to '${newName}'`);
 
     chrome.runtime.sendMessage(
         {
@@ -173,18 +173,18 @@ function handleRename(event) {
         },
         (response) => {
             if (chrome.runtime.lastError) {
-                console.error("Popup: Error sending rename message:", chrome.runtime.lastError.message);
+                logger.error("Popup: Error sending rename message:", chrome.runtime.lastError.message);
                 showStatusMessage(`Error renaming: ${chrome.runtime.lastError.message}`, 'error');
                 cell.textContent = originalName;
             } else if (response?.status === 'error') {
-                console.error("Popup: Background reported rename error:", response.message);
+                logger.error("Popup: Background reported rename error:", response.message);
                 showStatusMessage(`Error renaming: ${response.message}`, 'error');
                 cell.textContent = originalName;
             } else if (response?.status === 'success') {
-                console.log("Popup: Background confirmed model rename.");
+                logger.log("Popup: Background confirmed model rename.");
                 // Storage listener handles refresh
             } else {
-                console.warn("Popup: Received unexpected response from background for rename:", response);
+                logger.warn("Popup: Received unexpected response from background for rename:", response);
                 cell.textContent = originalName;
             }
             cell.blur();
@@ -196,12 +196,12 @@ function handleRename(event) {
  * Loads ELO data from storage and updates the leaderboard display.
  */
 async function loadAndDisplayLeaderboard() {
-    console.log("Popup: Loading and displaying leaderboard...");
+    logger.log("Popup: Loading and displaying leaderboard...");
     try {
         const eloData = await getStorageData(STORAGE_KEY_ELO) || {};
         displayLeaderboard(eloData);
     } catch (error) {
-        console.error("Popup: Error loading leaderboard data:", error);
+        logger.error("Popup: Error loading leaderboard data:", error);
         showStatusMessage("Failed to load leaderboard data.", 'error');
     }
 }
@@ -209,7 +209,7 @@ async function loadAndDisplayLeaderboard() {
 // --- Event Handling & Initialization ---
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Popup DOM loaded');
+    logger.log('Popup DOM loaded');
 
     // Get elements
     const modelAInput = document.getElementById('modelA');
@@ -226,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Listen for storage changes to update leaderboard automatically
     chrome.storage.onChanged.addListener((changes, namespace) => {
         if (namespace === 'local' && (changes[STORAGE_KEY_ELO] || changes[STORAGE_KEY_HISTORY])) {
-            console.log('Popup: Detected data change, refreshing leaderboard.');
+            logger.log('Popup: Detected data change, refreshing leaderboard.');
             loadAndDisplayLeaderboard();
         }
     });
@@ -298,13 +298,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         try {
             chrome.runtime.sendMessage(messagePayload, (response) => {
                 if (chrome.runtime.lastError) {
-                    console.error("Popup: Error sending manual match:", chrome.runtime.lastError.message);
+                    logger.error("Popup: Error sending manual match:", chrome.runtime.lastError.message);
                     showStatusMessage(`Error saving match: ${chrome.runtime.lastError.message}`, 'error');
                 } else if (response?.status === 'error') {
-                    console.error("Popup: Background reported error:", response.message);
+                    logger.error("Popup: Background reported error:", response.message);
                     showStatusMessage(`Error saving match: ${response.message}`, 'error');
                 } else {
-                    console.log("Popup: Background processed manual match:", response);
+                    logger.log("Popup: Background processed manual match:", response);
                     showStatusMessage('Manual match submitted successfully!', 'success');
                     modelAInput.value = '';
                     modelBInput.value = '';
@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 submitButton.disabled = false;
             });
         } catch (error) {
-            console.error("Popup: Error during manual sendMessage:", error);
+            logger.error("Popup: Error during manual sendMessage:", error);
             showStatusMessage(`Error saving match: ${error.message}`, 'error');
             submitButton.textContent = 'Submit Match';
             submitButton.disabled = false;

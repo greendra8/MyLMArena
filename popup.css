@@ -18,7 +18,8 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    width: 420px;
+    width: 480px;
+    height: 560px;
     padding: 16px;
     margin: 0;
     background-color: var(--bg-primary);
@@ -161,7 +162,7 @@ button:active {
     border-radius: var(--border-radius);
     margin-top: 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    max-height: 300px;
+    max-height: 400px;
     overflow-y: scroll;
     border: 1px solid var(--bg-tertiary);
 }
@@ -265,6 +266,10 @@ button:active {
     /* Slightly faded color */
     margin-left: 2px;
     /* Small space before the bracket */
+}
+
+#recordMatchForm {
+    padding-bottom: 10px;
 }
 
 /* Action buttons container */

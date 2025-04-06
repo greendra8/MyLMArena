@@ -1,7 +1,7 @@
 // background.js
 importScripts('common.js');
 
-console.log("MyLMArena: Background script running.");
+logger.log("MyLMArena: Background script running.");
 
 // Constants and helpers are now imported from common.js
 
@@ -14,10 +14,10 @@ console.log("MyLMArena: Background script running.");
  * @returns {Promise<boolean>} - True if successful, false otherwise.
  */
 async function recordMatch(modelA, modelB, winnerValue) {
-    console.log(`Background: Recording match: ${modelA} vs ${modelB}, Winner: ${winnerValue}`);
+    logger.log(`Background: Recording match: ${modelA} vs ${modelB}, Winner: ${winnerValue}`);
 
     if (!modelA || !modelB || !winnerValue) {
-        console.error("Background: Invalid data received for recordMatch.", { modelA, modelB, winnerValue });
+        logger.error("Background: Invalid data received for recordMatch.", { modelA, modelB, winnerValue });
         return false;
     }
 
@@ -69,11 +69,11 @@ async function recordMatch(modelA, modelB, winnerValue) {
         await setStorageData(STORAGE_KEY_ELO, eloData); // Use common func
         await setStorageData(STORAGE_KEY_HISTORY, matchHistory); // Use common func
 
-        console.log('Background: Match recorded successfully:', matchRecord);
-        console.log('Background: Updated ELO data:', eloData);
+        logger.log('Background: Match recorded successfully:', matchRecord);
+        logger.log('Background: Updated ELO data:', eloData);
         return true;
     } catch (error) {
-        console.error("Background: Error during recordMatch processing:", error);
+        logger.error("Background: Error during recordMatch processing:", error);
         return false;
     }
 }
@@ -85,7 +85,7 @@ async function recordMatch(modelA, modelB, winnerValue) {
  * @returns {Promise<{status: string, message: string}>} - Result object.
  */
 async function renameModel(oldName, newName) {
-    console.log(`Background: Renaming model from '${oldName}' to '${newName}'`);
+    logger.log(`Background: Renaming model from '${oldName}' to '${newName}'`);
     if (!oldName || !newName || oldName === newName) {
         return { status: "error", message: "Invalid old or new name provided." };
     }
@@ -130,11 +130,11 @@ async function renameModel(oldName, newName) {
         await setStorageData(STORAGE_KEY_ELO, eloData); // Use common func
         await setStorageData(STORAGE_KEY_HISTORY, updatedHistory); // Use common func
 
-        console.log(`Background: Model '${oldName}' successfully renamed to '${newName}'.`);
+        logger.log(`Background: Model '${oldName}' successfully renamed to '${newName}'.`);
         return { status: "success", message: "Model renamed successfully." };
 
     } catch (error) {
-        console.error("Background: Error during renameModel processing:", error);
+        logger.error("Background: Error during renameModel processing:", error);
         return { status: "error", message: "An internal error occurred during renaming." };
     }
 }
@@ -142,7 +142,7 @@ async function renameModel(oldName, newName) {
 // --- Message Listener --- 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("Background: Message received:", message);
+    logger.log("Background: Message received:", message);
 
     // Check if the message is from our content script (optional but good practice)
     // Note: sender.id might change during development when reloading extension
@@ -155,7 +155,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'AUTOMATED_MATCH' || message.type === 'MANUAL_MATCH') {
         const { modelA, modelB, winner } = message.payload;
         const source = message.type === 'MANUAL_MATCH' ? 'Manual' : 'Automated';
-        console.log(`Background: Received ${source} match.`);
+        logger.log(`Background: Received ${source} match.`);
 
         // Use the recordMatch function defined in the background script
         recordMatch(modelA, modelB, winner)
@@ -168,7 +168,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 }
             })
             .catch(error => {
-                console.error("Background: Error processing match message:", error);
+                logger.error("Background: Error processing match message:", error);
                 sendResponse({ status: "error", message: "Background script encountered an error processing the match." });
             });
 
@@ -184,7 +184,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 const response = await renameModel(oldName, newName);
                 sendResponse(response);
             } catch (error) {
-                console.error("Background: Error processing RENAME_MODEL message:", error);
+                logger.error("Background: Error processing RENAME_MODEL message:", error);
                 // Ensure a response is sent even on unexpected errors
                 sendResponse({ status: "error", message: "Background script encountered an error during rename." });
             }
@@ -194,8 +194,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     // Handle other message types if needed in the future
     // e.g., message from popup asking for current data
 
-    console.log("Background: Unhandled message type:", message.type);
+    logger.log("Background: Unhandled message type:", message.type);
     return false; // No async response planned for other types
 });
 
-console.log("Background: Initialized listeners."); 
+logger.log("Background: Initialized listeners."); 

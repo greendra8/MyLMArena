@@ -1,4 +1,4 @@
-console.log("MyLMArena: Content script injected.");
+logger.log("MyLMArena: Content script injected.");
 
 // --- Globals --- 
 let currentModelA = null; // Stores the latest identified Model A
@@ -44,18 +44,18 @@ function extractModelNames() {
 
     // Log updates to global state only if they change
     if (modelA_local !== currentModelA) {
-        console.log(`Model A updated: ${modelA_local}`);
+        logger.log(`Model A updated: ${modelA_local}`);
         currentModelA = modelA_local;
     }
     if (modelB_local !== currentModelB) {
-        console.log(`Model B updated: ${modelB_local}`);
+        logger.log(`Model B updated: ${modelB_local}`);
         currentModelB = modelB_local;
     }
 
     // --- Check for post-vote name capture --- 
     if (waitingForNamesAfterVote && foundA_local && foundB_local && modelA_local && modelB_local && pendingVoteOutcome) {
 
-        console.log(`Found names (${modelA_local}, ${modelB_local}) after waiting for vote outcome: ${pendingVoteOutcome}`);
+        logger.log(`Found names (${modelA_local}, ${modelB_local}) after waiting for vote outcome: ${pendingVoteOutcome}`);
 
         const matchData = {
             type: 'AUTOMATED_MATCH',
@@ -66,27 +66,27 @@ function extractModelNames() {
             }
         };
 
-        console.log("Sending match data (post-vote capture):", matchData);
+        logger.log("Sending match data (post-vote capture):", matchData);
         try {
             chrome.runtime.sendMessage(matchData, (response) => {
                 if (chrome.runtime.lastError) {
-                    console.error("Error sending message (post-vote capture):", chrome.runtime.lastError.message);
+                    logger.error("Error sending message (post-vote capture):", chrome.runtime.lastError.message);
                 } else {
-                    console.log("Message response (post-vote capture):", response ? JSON.stringify(response) : "(No response)");
+                    logger.log("Message response (post-vote capture):", response ? JSON.stringify(response) : "(No response)");
                 }
             });
         } catch (error) {
-            console.error("Error during chrome.runtime.sendMessage (post-vote capture):", error);
+            logger.error("Error during chrome.runtime.sendMessage (post-vote capture):", error);
         }
 
         // Reset the flags/state immediately after attempting to send
         pendingVoteOutcome = null;
         waitingForNamesAfterVote = false;
-        console.log("Reset post-vote state.");
+        logger.log("Reset post-vote state.");
 
     } else if (waitingForNamesAfterVote && (!foundA_local || !foundB_local)) {
         // We are waiting, but didn't find the names *in this specific scan*
-        console.log("Still waiting for names post-vote, H3s not found/parsed in this scan.");
+        logger.log("Still waiting for names post-vote, H3s not found/parsed in this scan.");
     }
 
     // --- Warnings --- (Simplified)
@@ -120,7 +120,7 @@ function attachVoteListeners() {
             if (!button.dataset.eloListenerAttached) {
                 button.addEventListener('click', () => handleVote(option.value));
                 button.dataset.eloListenerAttached = 'true';
-                console.log(`Attached listener to "${option.text}" button.`);
+                logger.log(`Attached listener to "${option.text}" button.`);
                 attached_in_this_run = true;
             }
             // Don't need else clause - if attached, it's fine
@@ -139,7 +139,7 @@ function attachVoteListeners() {
  * @param {'A' | 'B' | 'Draw'} winnerValue - The outcome determined by the clicked button.
  */
 function handleVote(winnerValue) {
-    console.log(`Vote button clicked: ${winnerValue}. Storing outcome and waiting for names...`);
+    logger.log(`Vote button clicked: ${winnerValue}. Storing outcome and waiting for names...`);
 
     // Store the outcome and set the flag
     pendingVoteOutcome = winnerValue;
@@ -158,17 +158,17 @@ function handleVote(winnerValue) {
  */
 function setupMutationObserver() {
     if (observer) {
-        console.log("Observer already exists. Disconnecting first.")
+        logger.log("Observer already exists. Disconnecting first.")
         observer.disconnect();
     }
 
     const targetNode = document.body;
     if (!targetNode) {
-        console.error("Could not find target node (document.body) for MutationObserver.");
+        logger.error("Could not find target node (document.body) for MutationObserver.");
         return;
     }
 
-    console.log("Setting up MutationObserver on document.body");
+    logger.log("Setting up MutationObserver on document.body");
 
     const config = { childList: true, subtree: true, characterData: true };
 
@@ -187,7 +187,7 @@ function setupMutationObserver() {
 
         // Set a new timer
         debounceTimer = setTimeout(() => {
-            console.log("Running debounced scan...")
+            logger.log("Running debounced scan...")
             // Run scans regardless of perceived relevance
             extractModelNames();
             attachVoteListeners();
@@ -197,10 +197,10 @@ function setupMutationObserver() {
 
     observer = new MutationObserver(callback);
     observer.observe(targetNode, config);
-    console.log("MutationObserver is now active.");
+    logger.log("MutationObserver is now active.");
 
     // Run initial scan immediately after setup
-    console.log("Performing initial scan...");
+    logger.log("Performing initial scan...");
     extractModelNames();
     attachVoteListeners();
 }
@@ -216,7 +216,7 @@ setupMutationObserver();
 // Optional: Add a listener for page unload to disconnect the observer
 window.addEventListener('beforeunload', () => {
     if (observer) {
-        console.log("Disconnecting observer on page unload.");
+        logger.log("Disconnecting observer on page unload.");
         observer.disconnect();
         observer = null;
     }

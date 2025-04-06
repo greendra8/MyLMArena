@@ -7,6 +7,35 @@ const DEFAULT_ELO = 1000; // Standardized default ELO
 const K_FACTOR = 32;
 const CONFIDENCE_INTERVAL_CONSTANT = 150; // For calculating score uncertainty
 
+// --- Development Mode Check & Logger ---
+// Checks if the extension is running unpacked (development mode).
+// Extensions installed from the store will have an update_url.
+const isDevelopmentMode = !('update_url' in chrome.runtime.getManifest());
+
+// Conditional logger object
+const logger = {
+    log: (...args) => {
+        if (isDevelopmentMode) {
+            console.log('MyLMArena [DEV]:', ...args);
+        }
+    },
+    warn: (...args) => {
+        if (isDevelopmentMode) {
+            console.warn('MyLMArena [DEV]:', ...args);
+        }
+    },
+    // Keep errors visible even in production for critical issues
+    error: (...args) => {
+        console.error('MyLMArena:', ...args);
+    },
+    // A specific method for info that might be useful sometimes, but less noisy than log
+    info: (...args) => {
+        if (isDevelopmentMode) {
+            console.info('MyLMArena [DEV]:', ...args);
+        }
+    }
+};
+
 // --- Storage Helper Functions ---
 async function getStorageData(key) {
     try {

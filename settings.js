@@ -117,11 +117,11 @@ async function resetAllData() {
     try {
         await setStorageData(STORAGE_KEY_ELO, {});
         await setStorageData(STORAGE_KEY_HISTORY, []);
-        console.log('Settings: All data has been reset');
+        logger.log('Settings: All data has been reset');
         showStatusMessage('All data has been reset.', 'success');
         // No leaderboard to refresh here
     } catch (error) {
-        console.error('Settings: Error resetting data:', error);
+        logger.error('Settings: Error resetting data:', error);
         showStatusMessage('Failed to reset data. Please try again.', 'error');
     }
 }
@@ -130,7 +130,7 @@ async function resetAllData() {
  * Exports current data (ELO and History) to a JSON file.
  */
 async function exportData() {
-    console.log("Settings: Starting data export...");
+    logger.log("Settings: Starting data export...");
     try {
         const eloData = await getStorageData(STORAGE_KEY_ELO) || {};
         const matchHistory = await getStorageData(STORAGE_KEY_HISTORY) || [];
@@ -154,10 +154,10 @@ async function exportData() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
 
-        console.log("Settings: Data export successful.");
+        logger.log("Settings: Data export successful.");
         showStatusMessage('Data exported successfully!', 'success');
     } catch (error) {
-        console.error('Settings: Error exporting data:', error);
+        logger.error('Settings: Error exporting data:', error);
         showStatusMessage(`Error exporting data: ${error.message}`, 'error');
     }
 }
@@ -172,7 +172,7 @@ async function handleImportConfirmation(dataToImport) {
         return;
     }
 
-    console.log("Settings: Showing confirmation for pre-loaded import data...");
+    logger.log("Settings: Showing confirmation for pre-loaded import data...");
 
     showConfirmationDialog(
         'Confirm Import',
@@ -181,14 +181,14 @@ async function handleImportConfirmation(dataToImport) {
             try {
                 await setStorageData(STORAGE_KEY_ELO, dataToImport.eloData);
                 await setStorageData(STORAGE_KEY_HISTORY, dataToImport.matchHistory);
-                console.log('Settings: Data imported successfully.');
+                logger.log('Settings: Data imported successfully.');
                 showStatusMessage('Data imported successfully! Changes will reflect in the popup.', 'success');
 
                 pendingImportData = null;
                 document.getElementById('importDataBtn').disabled = true;
                 document.getElementById('importFile').value = null;
             } catch (storageError) {
-                console.error('Settings: Error saving imported data:', storageError);
+                logger.error('Settings: Error saving imported data:', storageError);
                 showStatusMessage(`Error saving imported data: ${storageError.message}`, 'error');
                 pendingImportData = null;
                 document.getElementById('importDataBtn').disabled = true;
@@ -210,7 +210,7 @@ function handleFileSelection(event) {
 
     if (!file) return;
 
-    console.log("Settings: File selected, starting read and validation...");
+    logger.log("Settings: File selected, starting read and validation...");
 
     if (!file.type === 'application/json' && !file.name.endsWith('.json')) {
         showStatusMessage('Invalid file type. Please select a .json file.', 'error');
@@ -228,10 +228,10 @@ function handleFileSelection(event) {
             }
             pendingImportData = importedData;
             importButton.disabled = false;
-            console.log("Settings: File read and validated successfully.");
+            logger.log("Settings: File read and validated successfully.");
             showStatusMessage(`File "${file.name}" loaded. Click 'Import Data' to confirm.`, 'info', 5000);
         } catch (parseError) {
-            console.error('Settings: Error parsing JSON file:', parseError);
+            logger.error('Settings: Error parsing JSON file:', parseError);
             showStatusMessage(`Error reading file: ${parseError.message}`, 'error');
             pendingImportData = null;
             importButton.disabled = true;
@@ -240,7 +240,7 @@ function handleFileSelection(event) {
     };
 
     reader.onerror = (readError) => {
-        console.error('Settings: Error reading file:', readError.target.error);
+        logger.error('Settings: Error reading file:', readError.target.error);
         showStatusMessage(`Error reading file: ${readError.target.error.message}`, 'error');
         pendingImportData = null;
         importButton.disabled = true;
@@ -252,7 +252,7 @@ function handleFileSelection(event) {
 
 // --- Event Listeners --- 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Settings page loaded');
+    logger.log('Settings page loaded');
 
     const exportDataBtn = document.getElementById('exportDataBtn');
     const importFile = document.getElementById('importFile');
