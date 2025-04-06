@@ -40,6 +40,7 @@ h1 {
     color: var(--text-primary);
     letter-spacing: 0.5px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    flex-grow: 1;
 }
 
 h2 {
@@ -161,7 +162,7 @@ button:active {
     margin-top: 15px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     max-height: 300px;
-    overflow-y: auto;
+    overflow-y: scroll;
     border: 1px solid var(--bg-tertiary);
 }
 
@@ -205,7 +206,7 @@ button:active {
 #leaderboard td:first-child,
 #leaderboard th:first-child {
     text-align: center;
-    width: 50px;
+    width: 40px;
 }
 
 /* Style editable model name cell */
@@ -243,7 +244,7 @@ button:active {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--bg-tertiary);
+    background: transparent;
     border-radius: 4px;
 }
 
@@ -254,6 +255,16 @@ button:active {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-hover);
+}
+
+/* Confidence Interval Span Styling */
+.ci-value {
+    font-size: 0.8em;
+    /* Smaller font size relative to parent */
+    color: var(--text-secondary);
+    /* Slightly faded color */
+    margin-left: 2px;
+    /* Small space before the bracket */
 }
 
 /* Action buttons container */
@@ -338,6 +349,94 @@ button:active {
     flex: 1;
 }
 
+/* New Settings Button Style */
+#settingsBtn {
+    background-color: var(--accent);
+}
+
+#settingsBtn:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Helper class for full-width buttons */
+.full-width {
+    width: 100%;
+    margin-bottom: 10px;
+    /* Add some space below full-width buttons */
+}
+
+/* Settings View */
+#settingsView {
+    padding: 10px 0;
+    /* Add some padding */
+}
+
+#settingsView h2 {
+    margin-bottom: 15px;
+    color: var(--text-primary);
+    /* Make settings title standard text color */
+}
+
+#settingsView h3 {
+    color: var(--accent);
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-bottom: 1px solid var(--bg-tertiary);
+    padding-bottom: 5px;
+}
+
+#settingsView p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+#settingsView .settings-section {
+    margin-bottom: 20px;
+    background-color: var(--bg-secondary);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--bg-tertiary);
+    box-sizing: border-box;
+}
+
+/* Apply box-sizing to form group within settings */
+#settingsView .form-group {
+    box-sizing: border-box;
+}
+
+/* File Input Styling */
+input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--secondary);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    padding: 6px 12px;
+    margin-right: 10px;
+    background-color: var(--secondary);
+    border: none;
+    color: var(--text-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: var(--secondary-hover);
+}
+
 /* Disclaimer text */
 .disclaimer {
     text-align: center;
@@ -350,4 +449,64 @@ button:active {
 /* Hidden elements */
 .hidden {
     display: none;
+}
+
+/* Status Message Styling */
+.status-message {
+    padding: 10px 15px;
+    margin: 10px 0;
+    border-radius: var(--border-radius);
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.status-success {
+    background-color: rgba(76, 175, 80, 0.2);
+    /* Lighter success */
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.status-error {
+    background-color: rgba(255, 82, 82, 0.15);
+    /* Lighter danger */
+    color: var(--danger);
+    border: 1px solid var(--danger);
+}
+
+.status-info {
+    background-color: rgba(246, 110, 20, 0.15);
+    /* Lighter accent */
+    color: var(--accent);
+    border: 1px solid var(--accent);
+}
+
+/* Container for header elements */
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+/* Style for the social media link */
+.social-link {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+    background-color: var(--bg-secondary);
+    padding: 0 5px;
+    border-radius: var(--border-radius);
+}
+
+.social-link:hover {
+    color: var(--accent);
 }

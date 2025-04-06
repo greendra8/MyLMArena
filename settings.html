@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MyLMArena Settings</title>
+    <meta charset="utf-8">
+    <!-- Reuse popup styles for consistency -->
+    <link rel="stylesheet" href="popup.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Add some basic padding for the settings page body */
+        body {
+            padding: 20px;
+            max-width: 600px;
+            /* Give it a max width */
+            margin: 20px auto;
+            /* Center it */
+        }
+
+        h1 {
+            text-align: left;
+            /* Align main title left */
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            text-align: left;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>MyLMArena Settings</h1>
+
+    <!-- Status Message Placeholder -->
+    <div id="statusMessageContainer"></div>
+
+    <div class="settings-section">
+        <h2>Export Data</h2>
+        <p>Save your current rankings and match history to a JSON file.</p>
+        <button id="exportDataBtn" class="full-width">Export Data</button>
+    </div>
+
+    <div class="settings-section">
+        <h2>Import Data</h2>
+        <p>Load rankings and history from a JSON file. This will overwrite current data.</p>
+        <div class="form-group">
+            <label for="importFile">Select JSON File</label>
+            <input type="file" id="importFile" accept=".json">
+        </div>
+        <button id="importDataBtn" class="full-width" disabled>Import Data</button> <!-- Start disabled -->
+    </div>
+
+    <div class="settings-section">
+        <h2>Reset Data</h2>
+        <p>Delete all ELO rankings and match history. This action cannot be undone.</p>
+        <button id="resetDataBtnSettings" class="danger-button full-width">Reset All Data</button>
+    </div>
+
+    <!-- Confirmation Dialog Placeholder -->
+    <div id="confirmationDialogPlaceholder"></div>
+
+    <script src="common.js"></script>
+    <script src="settings.js"></script>
+</body>
+
+</html>

@@ -110,6 +110,7 @@ function attachVoteListeners() {
         { text: '👈  A is better', value: 'A' },
         { text: '👉  B is better', value: 'B' },
         { text: '🤝  Tie', value: 'Draw' },
+        { text: '👎  Both are bad', value: 'Draw' },
     ];
 
     voteOptions.forEach(option => {

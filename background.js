@@ -1,44 +1,11 @@
 // background.js
+importScripts('common.js');
+
 console.log("MyLMArena: Background script running.");
 
-// Constants (can be shared or redefined here)
-const DEFAULT_ELO = 1000;
-const K_FACTOR = 32;
-const STORAGE_KEY_ELO = 'eloData';
-const STORAGE_KEY_HISTORY = 'matchHistory';
+// Constants and helpers are now imported from common.js
 
-// --- Storage Helper Functions (copied from popup.js) ---
-async function getStorageData(key) {
-    try {
-        const data = await chrome.storage.local.get(key);
-        return data[key];
-    } catch (error) {
-        console.error(`Background: Error getting ${key} from storage:`, error);
-        return null;
-    }
-}
-
-async function setStorageData(key, value) {
-    try {
-        await chrome.storage.local.set({ [key]: value });
-    } catch (error) {
-        console.error(`Background: Error setting ${key} in storage:`, error);
-    }
-}
-
-// --- ELO Calculation (copied from popup.js) ---
-function calculateElo(ratingA, ratingB, scoreA, kFactor) {
-    const expectedScoreA = 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
-    const expectedScoreB = 1 / (1 + Math.pow(10, (ratingA - ratingB) / 400));
-
-    const newRatingA = Math.round(ratingA + kFactor * (scoreA - expectedScoreA));
-    const scoreB = 1 - scoreA;
-    const newRatingB = Math.round(ratingB + kFactor * (scoreB - expectedScoreB));
-
-    return { newRatingA, newRatingB };
-}
-
-// --- Core Match Recording Logic (moved from popup.js) ---
+// --- Core Match Recording Logic (Uses functions from common.js) ---
 /**
  * Processes and records a match, updating storage.
  * @param {string} modelA - Name of model A.
@@ -56,8 +23,8 @@ async function recordMatch(modelA, modelB, winnerValue) {
 
     try {
         // eloData structure: { modelName: { score: ELO, votes: count } }
-        let eloData = await getStorageData(STORAGE_KEY_ELO) || {};
-        let matchHistory = await getStorageData(STORAGE_KEY_HISTORY) || [];
+        let eloData = await getStorageData(STORAGE_KEY_ELO) || {}; // Use common func
+        let matchHistory = await getStorageData(STORAGE_KEY_HISTORY) || []; // Use common func
 
         // Initialize model data if it doesn't exist
         if (!eloData[modelA]) {
@@ -99,8 +66,8 @@ async function recordMatch(modelA, modelB, winnerValue) {
         };
         matchHistory.push(matchRecord);
 
-        await setStorageData(STORAGE_KEY_ELO, eloData);
-        await setStorageData(STORAGE_KEY_HISTORY, matchHistory);
+        await setStorageData(STORAGE_KEY_ELO, eloData); // Use common func
+        await setStorageData(STORAGE_KEY_HISTORY, matchHistory); // Use common func
 
         console.log('Background: Match recorded successfully:', matchRecord);
         console.log('Background: Updated ELO data:', eloData);
@@ -124,8 +91,8 @@ async function renameModel(oldName, newName) {
     }
 
     try {
-        let eloData = await getStorageData(STORAGE_KEY_ELO) || {};
-        let matchHistory = await getStorageData(STORAGE_KEY_HISTORY) || [];
+        let eloData = await getStorageData(STORAGE_KEY_ELO) || {}; // Use common func
+        let matchHistory = await getStorageData(STORAGE_KEY_HISTORY) || []; // Use common func
 
         // Check if old name exists and new name doesn't (or is same as old)
         if (!eloData[oldName]) {
@@ -160,8 +127,8 @@ async function renameModel(oldName, newName) {
         });
 
         // Save updated data
-        await setStorageData(STORAGE_KEY_ELO, eloData);
-        await setStorageData(STORAGE_KEY_HISTORY, updatedHistory);
+        await setStorageData(STORAGE_KEY_ELO, eloData); // Use common func
+        await setStorageData(STORAGE_KEY_HISTORY, updatedHistory); // Use common func
 
         console.log(`Background: Model '${oldName}' successfully renamed to '${newName}'.`);
         return { status: "success", message: "Model renamed successfully." };
@@ -185,8 +152,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     //     return false; 
     // }
 
-    if (message.type === 'AUTOMATED_MATCH') {
+    if (message.type === 'AUTOMATED_MATCH' || message.type === 'MANUAL_MATCH') {
         const { modelA, modelB, winner } = message.payload;
+        const source = message.type === 'MANUAL_MATCH' ? 'Manual' : 'Automated';
+        console.log(`Background: Received ${source} match.`);
 
         // Use the recordMatch function defined in the background script
         recordMatch(modelA, modelB, winner)
@@ -199,8 +168,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 }
             })
             .catch(error => {
-                console.error("Background: Error processing AUTOMATED_MATCH message:", error);
-                sendResponse({ status: "error", message: "Background script encountered an error." });
+                console.error("Background: Error processing match message:", error);
+                sendResponse({ status: "error", message: "Background script encountered an error processing the match." });
             });
 
         return true; // Indicates an asynchronous response will be sent
@@ -229,43 +198,4 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return false; // No async response planned for other types
 });
 
-// Keep service worker alive (basic mechanism, might need more robust approach for complex tasks)
-// This might not be strictly necessary just for handling messages, but useful if bg script did more.
-let lifeline;
-
-keepAlive();
-
-chrome.runtime.onConnect.addListener(port => {
-    if (port.name === 'keepAlive') {
-        lifeline = port;
-        setTimeout(keepAliveForced, 295e3); // 5 minutes minus 5 seconds
-        port.onDisconnect.addListener(keepAliveForced);
-    }
-});
-
-function keepAliveForced() {
-    lifeline?.disconnect();
-    lifeline = null;
-    keepAlive();
-}
-
-async function keepAlive() {
-    if (lifeline) return;
-    for (const tab of await chrome.tabs.query({ url: "*://*/*" })) {
-        try {
-            await chrome.scripting.executeScript({
-                target: { tabId: tab.id },
-                function: () => chrome.runtime.connect({ name: 'keepAlive' }),
-            });
-            chrome.tabs.onUpdated.removeListener(retryOnTabUpdate);
-            return;
-        } catch (e) { }
-    }
-    chrome.tabs.onUpdated.addListener(retryOnTabUpdate);
-}
-
-async function retryOnTabUpdate(tabId, info, tab) {
-    if (info.url && /^(file|https?):/.test(info.url)) {
-        keepAlive();
-    }
-} 
+console.log("Background: Initialized listeners."); 

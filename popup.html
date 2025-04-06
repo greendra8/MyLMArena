@@ -11,59 +11,69 @@
 </head>
 
 <body>
-    <h1>MyLMArena</h1>
+    <div class="header-container">
+        <h1>MyLMArena</h1>
+        <a href="https://x.com/jackhullis" target="_blank" rel="noopener noreferrer" class="social-link">𝕏
+            @jackhullis</a>
+    </div>
 
     <!-- Disclaimer text -->
     <p class="disclaimer">Note: Scores in MyLMArena are not comparable to lmarena.ai scores</p>
 
-    <!-- Leaderboard Section (Now at Top) -->
-    <div id="leaderboard">
-        <!-- Leaderboard will be populated here -->
-        <p>No matches recorded yet.</p>
-    </div>
+    <!-- Status Message Placeholder (will be added by JS) -->
 
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-        <button id="toggleFormBtn" class="secondary-button">Manual Add</button>
-        <button id="resetDataBtn" class="danger-button">Reset Data</button>
-    </div>
-
-    <!-- Manual Form (Hidden by Default) -->
-    <div id="recordMatchForm" class="hidden">
-        <div class="form-group">
-            <label for="modelA">Model A</label>
-            <div class="input-wrapper">
-                <input type="text" id="modelA" placeholder="Enter Model A name">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="modelB">Model B</label>
-            <div class="input-wrapper">
-                <input type="text" id="modelB" placeholder="Enter Model B name">
-            </div>
+    <!-- Main View Content -->
+    <div id="mainView">
+        <!-- Leaderboard Section -->
+        <div id="leaderboard">
+            <!-- Leaderboard will be populated here -->
+            <p>No matches recorded yet.</p>
         </div>
 
-        <div class="form-group">
-            <label>Winner</label>
-            <div class="radio-group">
-                <div class="radio-item">
-                    <input type="radio" id="winnerA" name="winner" value="A">
-                    <label class="radio-label" for="winnerA">Model A</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="winnerB" name="winner" value="B">
-                    <label class="radio-label" for="winnerB">Model B</label>
-                </div>
-                <div class="radio-item">
-                    <input type="radio" id="winnerDraw" name="winner" value="Draw" checked>
-                    <label class="radio-label" for="winnerDraw">Draw</label>
-                </div>
-            </div>
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button id="toggleFormBtn" class="secondary-button">Manual Add</button>
+            <button id="settingsBtn" class="">Settings</button>
         </div>
 
-        <button id="submitMatch">Submit Match</button>
+        <!-- Manual Form (Hidden by Default) -->
+        <div id="recordMatchForm" class="hidden">
+            <div class="form-group">
+                <label for="modelA">Model A</label>
+                <div class="input-wrapper">
+                    <input type="text" id="modelA" placeholder="Enter Model A name">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="modelB">Model B</label>
+                <div class="input-wrapper">
+                    <input type="text" id="modelB" placeholder="Enter Model B name">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Winner</label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="winnerA" name="winner" value="A">
+                        <label class="radio-label" for="winnerA">Model A</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="winnerB" name="winner" value="B">
+                        <label class="radio-label" for="winnerB">Model B</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="winnerDraw" name="winner" value="Draw" checked>
+                        <label class="radio-label" for="winnerDraw">Draw</label>
+                    </div>
+                </div>
+            </div>
+
+            <button id="submitMatch">Submit Match</button>
+        </div>
     </div>
 
+    <script src="common.js"></script>
     <script src="popup.js"></script>
 </body>
 
