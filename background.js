@@ -1,5 +1,4 @@
 // background.js
-importScripts('common.js');
 
 logger.log("MyLMArena: Background script running.");
 

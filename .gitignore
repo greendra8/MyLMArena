@@ -1,2 +1,25 @@
+# Project Planning Files (User Specified)
 /PROJECT_REQUIREMENTS.txt
 /TODO.md
+
+# Build Script (User Specified)
+/build.mjs
+
+# Node/npm Dependencies
+/node_modules
+
+# Build Output
+/dist
+*.zip
+
+# Optional: Lockfile (Uncomment if you don't want to track exact dependency versions)
+# package-lock.json
+
+# Optional: Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional: OS generated files
+.DS_Store
+Thumbs.db

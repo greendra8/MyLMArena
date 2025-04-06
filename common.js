@@ -10,7 +10,8 @@ const CONFIDENCE_INTERVAL_CONSTANT = 150; // For calculating score uncertainty
 // --- Development Mode Check & Logger ---
 // Checks if the extension is running unpacked (development mode).
 // Extensions installed from the store will have an update_url.
-const isDevelopmentMode = !('update_url' in chrome.runtime.getManifest());
+// const isDevelopmentMode = !('update_url' in chrome.runtime.getManifest());
+const isDevelopmentMode = true;
 
 // Conditional logger object
 const logger = {

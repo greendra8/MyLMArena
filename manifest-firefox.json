@@ -1,0 +1,38 @@
+{
+    "manifest_version": 3,
+    "name": "MyLMArena",
+    "version": "0.1.0",
+    "description": "Track your personal LLM preferences using ELO ratings with MyLMArena.",
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://lmarena.ai/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ],
+    "background": {
+        "scripts": [
+            "common.js",
+            "background.js"
+        ]
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "strict_min_version": "109.0"
+        }
+    }
+}
