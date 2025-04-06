@@ -3,6 +3,11 @@
     "name": "MyLMArena",
     "version": "0.1.0",
     "description": "Track your personal LLM preferences using ELO ratings with MyLMArena.",
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    },
     "permissions": [
         "storage"
     ],
