@@ -59,7 +59,7 @@ function displayLeaderboard(eloData) {
     leaderboardDiv.innerHTML = ''; // Clear previous content
 
     if (!eloData || Object.keys(eloData).length === 0) {
-        leaderboardDiv.innerHTML = '<p>No matches recorded yet.</p>';
+        leaderboardDiv.innerHTML = '<p>No results recorded yet. <br> <a href="https://lmarena.ai" target="_blank" rel="noopener noreferrer">Go to lmarena.ai arena (battle) and start voting!</a></p>';
         return;
     }
 

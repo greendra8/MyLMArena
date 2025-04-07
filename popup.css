@@ -52,6 +52,18 @@ h2 {
     letter-spacing: 0.3px;
 }
 
+a {
+    color: var(--accent);
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:visited {
+    color: var(--accent);
+}
+
 .form-group {
     margin-bottom: 14px;
     position: relative;
@@ -218,7 +230,7 @@ button:active {
 }
 
 #leaderboard td[contenteditable="true"]:focus {
-    box-shadow: 0 0 0 1px var(--accent);
+    outline: 1px solid var(--accent);
 }
 
 .rank-1,
@@ -501,17 +513,13 @@ input[type="file"]::-webkit-file-upload-button:hover {
 /* Style for the social media link */
 .social-link {
     position: fixed;
-    top: 15px;
+    top: 22px;
     right: 15px;
     font-size: 0.9rem;
-    color: var(--text-secondary);
+    color: var(--text-primary) !important;
     text-decoration: none;
     transition: color 0.2s ease;
     background-color: var(--bg-secondary);
     padding: 0 5px;
     border-radius: var(--border-radius);
-}
-
-.social-link:hover {
-    color: var(--accent);
 }
