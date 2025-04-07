@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
     "name": "MyLMArena",
-    "version": "0.1.0",
-    "description": "Track your personal LLM preferences using ELO ratings with MyLMArena.",
+    "version": "0.1.2",
+    "description": "Track your LLM preferences on LMArena with a personal ELO rating leaderboard.",
     "icons": {
         "16": "icon16.png",
         "48": "icon48.png",

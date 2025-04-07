@@ -1,7 +1,7 @@
 {
   "name": "mylmarena",
-  "version": "0.1.0",
-  "description": "Track your personal LLM preferences using ELO ratings with MyLMArena.",
+  "version": "0.1.2",
+  "description": "Track your LLM preferences on LMArena with a personal ELO rating leaderboard.",
   "main": "popup.js",
   "scripts": {
     "build:chrome": "node build.mjs chrome",
@@ -15,7 +15,7 @@
     "elo",
     "llm"
   ],
-  "author": "Your Name",
+  "author": "Jack Hullis",
   "license": "ISC",
   "devDependencies": {
     "archiver": "^7.0.1",
