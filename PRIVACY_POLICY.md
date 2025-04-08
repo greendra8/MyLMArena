@@ -61,4 +61,4 @@ We may update this Privacy Policy from time to time. We will notify you of any c
 
 **9. Contact Us**
 
-If you have any questions about this Privacy Policy, please open an issue on the project's GitHub repository: [Link to your GitHub Issues Page - e.g., https://github.com/greendra8/MyLMArena/issues] 
+If you have any questions about this Privacy Policy, please open an issue on the project's GitHub repository: [https://github.com/greendra8/MyLMArena/issues](https://github.com/greendra8/MyLMArena/issues)
