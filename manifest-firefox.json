@@ -26,6 +26,7 @@
     ],
     "background": {
         "scripts": [
+            "google-analytics.js",
             "common.js",
             "background.js"
         ]

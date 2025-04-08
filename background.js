@@ -1,8 +1,18 @@
 // background.js
 
+// Assuming Analytics class is globally available via importScripts (Chrome)
+// or background.scripts (Firefox). analytics.js should be loaded before this.
+const analytics = new Analytics(); // Instantiate Analytics
+
 logger.log("MyLMArena: Background script running.");
 
 // Constants and helpers are now imported from common.js
+
+// Track extension installation or update
+chrome.runtime.onInstalled.addListener(details => {
+    logger.log("Background: onInstalled event triggered.", details);
+    analytics.fireEvent('extension_installed', { reason: details.reason });
+});
 
 // --- Core Match Recording Logic (Uses functions from common.js) ---
 /**
@@ -73,6 +83,7 @@ async function recordMatch(modelA, modelB, winnerValue) {
         return true;
     } catch (error) {
         logger.error("Background: Error during recordMatch processing:", error);
+        // Don't track this specific error here, it's handled in the message listener catch block
         return false;
     }
 }
@@ -134,6 +145,7 @@ async function renameModel(oldName, newName) {
 
     } catch (error) {
         logger.error("Background: Error during renameModel processing:", error);
+        // Don't track this specific error here, it's handled in the message listener catch block
         return { status: "error", message: "An internal error occurred during renaming." };
     }
 }
@@ -156,6 +168,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const source = message.type === 'MANUAL_MATCH' ? 'Manual' : 'Automated';
         logger.log(`Background: Received ${source} match.`);
 
+        // Fire analytics event for received match
+        analytics.fireEvent(message.type.toLowerCase(), {
+            source: source,
+            // Optional: add model names if privacy allows, maybe hash them first?
+            // model_a_hash: hash(modelA),
+            // model_b_hash: hash(modelB),
+            winner: winner // 'A', 'B', or 'Draw'
+        });
+
         // Use the recordMatch function defined in the background script
         recordMatch(modelA, modelB, winner)
             .then(success => {
@@ -169,6 +190,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             .catch(error => {
                 logger.error("Background: Error processing match message:", error);
                 sendResponse({ status: "error", message: "Background script encountered an error processing the match." });
+                analytics.fireErrorEvent(error, { context: 'record_match_message_handler' }); // Track error
             });
 
         return true; // Indicates an asynchronous response will be sent
@@ -186,6 +208,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 logger.error("Background: Error processing RENAME_MODEL message:", error);
                 // Ensure a response is sent even on unexpected errors
                 sendResponse({ status: "error", message: "Background script encountered an error during rename." });
+                analytics.fireErrorEvent(error, { context: 'rename_model_message_handler' }); // Track error
             }
         })(); // Immediately invoke the async function
         return true; // Crucial: Indicates async response is coming
@@ -197,4 +220,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return false; // No async response planned for other types
 });
 
-logger.log("Background: Initialized listeners."); 
+// --- Global Error Handling ---
+self.addEventListener('unhandledrejection', async (event) => {
+    logger.error('Background Unhandled Rejection:', event.reason);
+    try {
+        // Create a basic error object if reason is not already an Error
+        const error = event.reason instanceof Error ? event.reason : new Error(JSON.stringify(event.reason));
+        analytics.fireErrorEvent(error, { context: 'background_unhandled_rejection' });
+    } catch (analyticsError) {
+        logger.error("Error reporting unhandled rejection to analytics:", analyticsError);
+    }
+});
+
+self.addEventListener('error', async (event) => {
+    logger.error('Background Unhandled Error:', event.error || event.message);
+    try {
+        const error = event.error instanceof Error ? event.error : new Error(event.message || 'Unknown background error');
+        analytics.fireErrorEvent(error, { context: 'background_unhandled_error' });
+    } catch (analyticsError) {
+        logger.error("Error reporting unhandled error to analytics:", analyticsError);
+    }
+});
+
+logger.log("Background: Initialized listeners and analytics."); 

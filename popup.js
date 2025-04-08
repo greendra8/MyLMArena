@@ -1,4 +1,6 @@
 // popup.js
+// import analytics from './google-analytics.js'; // REMOVED IMPORT
+const analytics = new Analytics(); // Instantiate directly
 
 // Constants are now loaded from common.js via popup.html
 // const STORAGE_KEY_ELO = 'eloData';
@@ -223,6 +225,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Load initial leaderboard
     await loadAndDisplayLeaderboard();
 
+    // Track initial page view
+    analytics.firePageViewEvent(document.title, document.location.href);
+
     // Listen for storage changes to update leaderboard automatically
     chrome.storage.onChanged.addListener((changes, namespace) => {
         if (namespace === 'local' && (changes[STORAGE_KEY_ELO] || changes[STORAGE_KEY_HISTORY])) {
@@ -235,6 +240,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Settings Button - Opens settings page in a new tab
     settingsBtn.addEventListener('click', () => {
+        analytics.fireEvent('button_click', { button_id: 'settingsBtn' });
         chrome.tabs.create({ url: 'settings.html' });
     });
 
@@ -283,6 +289,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             return;
         }
 
+        // Fire analytics event before sending message
+        analytics.fireEvent('manual_match_submit', {
+            model_a: modelA,
+            model_b: modelB,
+            winner: winnerValue
+        });
+
         submitButton.textContent = 'Submitting...';
         submitButton.disabled = true;
 
@@ -320,6 +333,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             showStatusMessage(`Error saving match: ${error.message}`, 'error');
             submitButton.textContent = 'Submit Match';
             submitButton.disabled = false;
+            analytics.fireErrorEvent(error, { context: 'manual_match_submission' }); // Track error
         }
     });
 }); 

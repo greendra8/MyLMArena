@@ -1,4 +1,5 @@
 // settings.js
+const analytics = new Analytics(); // Instantiate directly
 
 // --- Global Variables --- 
 let pendingImportData = null; // Variable to hold parsed data from the selected file
@@ -123,6 +124,7 @@ async function resetAllData() {
     } catch (error) {
         logger.error('Settings: Error resetting data:', error);
         showStatusMessage('Failed to reset data. Please try again.', 'error');
+        analytics.fireErrorEvent(error, { context: 'reset_all_data' }); // Track error
     }
 }
 
@@ -159,6 +161,7 @@ async function exportData() {
     } catch (error) {
         logger.error('Settings: Error exporting data:', error);
         showStatusMessage(`Error exporting data: ${error.message}`, 'error');
+        analytics.fireErrorEvent(error, { context: 'export_data' }); // Track error
     }
 }
 
@@ -190,6 +193,7 @@ async function handleImportConfirmation(dataToImport) {
             } catch (storageError) {
                 logger.error('Settings: Error saving imported data:', storageError);
                 showStatusMessage(`Error saving imported data: ${storageError.message}`, 'error');
+                analytics.fireErrorEvent(storageError, { context: 'import_confirmation_save' }); // Track error
                 pendingImportData = null;
                 document.getElementById('importDataBtn').disabled = true;
             }
@@ -233,6 +237,7 @@ function handleFileSelection(event) {
         } catch (parseError) {
             logger.error('Settings: Error parsing JSON file:', parseError);
             showStatusMessage(`Error reading file: ${parseError.message}`, 'error');
+            analytics.fireErrorEvent(parseError, { context: 'import_file_parse' }); // Track error
             pendingImportData = null;
             importButton.disabled = true;
             fileInput.value = null;
@@ -242,6 +247,7 @@ function handleFileSelection(event) {
     reader.onerror = (readError) => {
         logger.error('Settings: Error reading file:', readError.target.error);
         showStatusMessage(`Error reading file: ${readError.target.error.message}`, 'error');
+        analytics.fireErrorEvent(new Error(readError.target.error?.message || 'File read error'), { context: 'import_file_read' }); // Track error
         pendingImportData = null;
         importButton.disabled = true;
         fileInput.value = null;
@@ -254,24 +260,32 @@ function handleFileSelection(event) {
 document.addEventListener('DOMContentLoaded', () => {
     logger.log('Settings page loaded');
 
+    // Track page view
+    analytics.firePageViewEvent(document.title, document.location.href);
+
     const exportDataBtn = document.getElementById('exportDataBtn');
     const importFile = document.getElementById('importFile');
     const importDataBtn = document.getElementById('importDataBtn');
     const resetDataBtnSettings = document.getElementById('resetDataBtnSettings');
 
     // Export Data
-    exportDataBtn.addEventListener('click', exportData);
+    exportDataBtn.addEventListener('click', () => {
+        analytics.fireEvent('button_click', { button_id: 'exportDataBtn' });
+        exportData();
+    });
 
     // File Selection Listener
     importFile.addEventListener('change', handleFileSelection);
 
     // Import Data Button Listener
     importDataBtn.addEventListener('click', () => {
+        analytics.fireEvent('button_click', { button_id: 'importDataBtn' });
         handleImportConfirmation(pendingImportData);
     });
 
     // Reset data button
     resetDataBtnSettings.addEventListener('click', () => {
+        analytics.fireEvent('button_click', { button_id: 'resetDataBtnSettings' });
         showConfirmationDialog(
             'Reset All Data?',
             'This will delete all ELO rankings and match history. This action cannot be undone.',
