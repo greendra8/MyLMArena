@@ -1,6 +1,6 @@
 **Privacy Policy for MyLMArena Chrome Extension**
 
-**Effective Date:** July 23, 2024  <!-- Please update with the actual date -->
+**Effective Date:** April 8th, 2025
 
 **1. Introduction**
 
@@ -61,4 +61,4 @@ We may update this Privacy Policy from time to time. We will notify you of any c
 
 **9. Contact Us**
 
-If you have any questions about this Privacy Policy, please open an issue on the project's GitHub repository: [Link to your GitHub Issues Page - e.g., https://github.com/YourUsername/MyLMArena/issues] <!-- Please update with the correct link -->
+If you have any questions about this Privacy Policy, please open an issue on the project's GitHub repository: [Link to your GitHub Issues Page - e.g., https://github.com/greendra8/MyLMArena/issues] 
