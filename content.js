@@ -1,5 +1,8 @@
 console.log("MyLMArena: Content script injected.");
 
+// Add detection for beta site
+const isBeta = location.host.includes('beta.lmarena.ai');
+
 // --- Globals --- 
 let currentModelA = null; // Stores the latest identified Model A
 let currentModelB = null; // Stores the latest identified Model B
@@ -188,11 +191,14 @@ function setupMutationObserver() {
         // Set a new timer
         debounceTimer = setTimeout(() => {
             console.log("Running debounced scan...")
-            // Run scans regardless of perceived relevance
-            extractModelNames();
-            attachVoteListeners();
-
-        }, 500); // Increased debounce to 500ms
+            if (isBeta) {
+                extractModelNamesBeta();
+                attachVoteListenersBeta();
+            } else {
+                extractModelNames();
+                attachVoteListeners();
+            }
+        }, 500);
     };
 
     observer = new MutationObserver(callback);
@@ -201,8 +207,13 @@ function setupMutationObserver() {
 
     // Run initial scan immediately after setup
     console.log("Performing initial scan...");
-    extractModelNames();
-    attachVoteListeners();
+    if (isBeta) {
+        extractModelNamesBeta();
+        attachVoteListenersBeta();
+    } else {
+        extractModelNames();
+        attachVoteListeners();
+    }
 }
 
 
@@ -220,4 +231,70 @@ window.addEventListener('beforeunload', () => {
         observer.disconnect();
         observer = null;
     }
-}); 
+});
+
+// --- Beta UI support ---
+function extractModelNamesBeta() {
+    let modelA_local = null;
+    let modelB_local = null;
+    const msgs = document.querySelectorAll('div[data-sentry-component="BotMessage"]');
+    if (msgs.length >= 2) {
+        const tagA = msgs[0].querySelector('p[data-sentry-element="Tag"]');
+        const tagB = msgs[1].querySelector('p[data-sentry-element="Tag"]');
+        if (tagA) modelA_local = tagA.textContent.trim();
+        if (tagB) modelB_local = tagB.textContent.trim();
+    }
+    if (modelA_local !== currentModelA) {
+        console.log(`Beta: Model A updated: ${modelA_local}`);
+        currentModelA = modelA_local;
+    }
+    if (modelB_local !== currentModelB) {
+        console.log(`Beta: Model B updated: ${modelB_local}`);
+        currentModelB = modelB_local;
+    }
+    if (waitingForNamesAfterVote && modelA_local && modelB_local && pendingVoteOutcome) {
+        console.log(`Beta: Found names (${modelA_local}, ${modelB_local}) after vote: ${pendingVoteOutcome}`);
+        const matchData = {
+            type: 'AUTOMATED_MATCH',
+            payload: { modelA: modelA_local, modelB: modelB_local, winner: pendingVoteOutcome }
+        };
+        console.log("Sending beta match data:", matchData);
+        try {
+            chrome.runtime.sendMessage(matchData, response => {
+                if (chrome.runtime.lastError) {
+                    console.error("Beta: Error sending match data:", chrome.runtime.lastError.message);
+                } else {
+                    console.log("Beta: Match response:", response);
+                }
+            });
+        } catch (error) {
+            console.error("Beta: Error sending match:", error);
+        }
+        pendingVoteOutcome = null;
+        waitingForNamesAfterVote = false;
+        console.log("Beta: Reset post-vote state.");
+    }
+}
+
+function attachVoteListenersBeta() {
+    let attached_in_this_run = false;
+    const voteBar = document.querySelector('div[data-sentry-component="VoteBar"]');
+    if (!voteBar) return attached_in_this_run;
+    const buttons = Array.from(voteBar.querySelectorAll('button'));
+    const voteOptions = [
+        { text: 'Left is Better', value: 'A' },
+        { text: "It's a tie", value: 'Draw' },
+        { text: 'Both are bad', value: 'Draw' },
+        { text: 'Right is Better', value: 'B' }
+    ];
+    voteOptions.forEach(option => {
+        const btn = buttons.find(b => b.textContent.trim() === option.text);
+        if (btn && !btn.dataset.eloListenerAttachedBeta) {
+            btn.addEventListener('click', () => handleVote(option.value));
+            btn.dataset.eloListenerAttachedBeta = 'true';
+            console.log(`Beta: Attached listener to "${option.text}"`);
+            attached_in_this_run = true;
+        }
+    });
+    return attached_in_this_run;
+} 

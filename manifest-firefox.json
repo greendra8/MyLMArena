@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "MyLMArena",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "Track your LLM preferences on LMArena with a personal ELO rating leaderboard.",
     "icons": {
         "16": "icon16.png",
@@ -11,13 +11,18 @@
     "permissions": [
         "storage"
     ],
+    "host_permissions": [
+        "*://lmarena.ai/*",
+        "*://beta.lmarena.ai/*"
+    ],
     "action": {
         "default_popup": "popup.html"
     },
     "content_scripts": [
         {
             "matches": [
-                "*://lmarena.ai/*"
+                "*://lmarena.ai/*",
+                "*://beta.lmarena.ai/*"
             ],
             "js": [
                 "content.js"
